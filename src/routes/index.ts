@@ -1,9 +1,11 @@
 import { FastifyInstance } from "fastify";
-import exampleRoute from "./exampleRoute";
+//import exampleRoute from "./exampleRoute";
 import taskRoutes from "./taskRoutes";
+import userRouts from "./userRoutes";
 
 export default async function routes(fastify: FastifyInstance) {
+  // List all the routes in use here
   fastify.register(taskRoutes);
-  fastify.register(exampleRoute);
-  // Add more route handlers here if needed
+  fastify.register(userRouts);
+  //fastify.register(exampleRoute);
 }
