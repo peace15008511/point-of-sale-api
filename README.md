@@ -5,7 +5,7 @@
 1. Clone this repository:
 
    ```bash
-   git clone https://github.com/yourusername/fastify-typescript-api.git
+   git clone https://github.com/peace15008511/task-manager-api.git
 
    ```
 

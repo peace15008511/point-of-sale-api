@@ -1,12 +1,9 @@
 import { FastifyInstance } from "fastify";
 import exampleRoute from "./exampleRoute";
+import taskRoutes from "./taskRoutes";
 
-export default function routes(
-  fastify: FastifyInstance,
-  options: any,
-  done: () => void
-) {
-  fastify.register(exampleRoute, { prefix: "/example" });
-  // Add more routes here if needed
-  done();
+export default async function routes(fastify: FastifyInstance) {
+  fastify.register(taskRoutes);
+  fastify.register(exampleRoute);
+  // Add more route handlers here if needed
 }
