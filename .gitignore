@@ -1,0 +1,21 @@
+# Ignore node_modules directory
+node_modules/
+
+# Ignore compiled JavaScript files
+dist/
+
+# Ignore any files or directories generated during development
+# (e.g., .vscode, .idea, .DS_Store, .cache, etc.)
+# Add other generated files/directories specific to your development environment
+.vscode/
+.idea/
+.cache/
+.DS_Store
+
+# Ignore environment-specific configuration files
+# (e.g., .env, .env.local, .env.test, .env.production)
+.env*
+.env.local
+
+# Ignore any sensitive information or credentials
+# (e.g., API keys, passwords, private keys, etc.)
