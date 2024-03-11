@@ -1,3 +1,4 @@
+// user.model.ts
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../database/sequelize";
 
@@ -5,7 +6,6 @@ class User extends Model {}
 
 User.init(
   {
-    // Define your model attributes
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
@@ -24,14 +24,8 @@ User.init(
   },
   {
     sequelize,
-    modelName: "User", // Your model name
+    modelName: "User",
   }
 );
 
 export default User;
-
-export interface UserModel {
-  id: number;
-  email: string;
-  password: string;
-}
