@@ -1,4 +1,8 @@
+import fastify from "fastify";
 import { UserModel } from "../models/userModel";
+import sequelize from "../database/sequelize";
+
+const server = fastify({ logger: true });
 
 export async function serviceGetUsers(): Promise<UserModel[]> {
   // Example logic to fetch data from a database or external service
@@ -19,5 +23,16 @@ export async function serviceGetUsers(): Promise<UserModel[]> {
       password: "hashed_password_3",
     },
   ];
+
+  // Check database connection
+  sequelize
+    .authenticate()
+    .then(() => {
+      server.log.info("Database connection has been established successfully.");
+    })
+    .catch((err) => {
+      console.error();
+      server.log.error("Unable to connect to the database:", err);
+    });
   return data;
 }

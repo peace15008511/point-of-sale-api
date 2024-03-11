@@ -7,7 +7,9 @@ server.register(routes);
 
 const start = async () => {
   try {
-    await server.listen({ port: 3000 });
+    //Read port from environment variable => default is '3000'
+    const port: number = 8080; //Number(process.env.PORT) ?? 3000;
+    await server.listen({ port: port });
   } catch (err) {
     server.log.error(err);
     process.exit(1);
