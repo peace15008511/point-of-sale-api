@@ -1,4 +1,3 @@
-// user.service.ts
 import User from "../models/user.model";
 
 async function createUser(email: string, password: string) {
@@ -6,7 +5,7 @@ async function createUser(email: string, password: string) {
     // Check if user with the provided email already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-      throw new Error("User with this email already exists");
+      return { error: "User with this email already exists" };
     }
 
     // Create the user
