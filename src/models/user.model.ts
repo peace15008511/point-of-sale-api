@@ -11,21 +11,33 @@ User.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    username: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true,
     },
-    // Add more attributes as needed
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   },
   {
     sequelize,
     modelName: "User",
+    tableName: "users", // Specify the table name explicitly
+    timestamps: true, // Add createdAt and updatedAt timestamps
+    underscored: true, // Use underscored naming for columns (e.g., created_at)
   }
 );
+
+// Synchronize the model with the database to create the table if it doesn't exist
+(async () => {
+  try {
+    await sequelize.sync();
+    console.log("User table synced successfully");
+  } catch (error) {
+    console.error("Error syncing User table:", error);
+  }
+})();
 
 export default User;

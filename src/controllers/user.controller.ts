@@ -3,8 +3,8 @@ import { createUser } from "../services/user.service";
 
 // Define an interface for the request body
 interface CreateUserRequest {
-  username: string;
   email: string;
+  password: string;
 }
 
 async function createUserController(
@@ -12,10 +12,10 @@ async function createUserController(
   reply: FastifyReply
 ) {
   try {
-    const { username, email } = request.body;
+    const { email, password } = request.body;
 
     // Create the user using the service function
-    const newUser = await createUser(username, email);
+    const newUser = await createUser(email, password);
 
     return reply.code(201).send(newUser);
   } catch (error: any) {
