@@ -1,8 +1,11 @@
-// user.model.ts
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../database/sequelize";
 
-class User extends Model {}
+class User extends Model {
+  public id!: number;
+  public email!: string;
+  public password!: string;
+}
 
 User.init(
   {

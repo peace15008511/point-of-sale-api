@@ -1,9 +1,12 @@
-// user.route.ts
-import fastify, { FastifyInstance } from "fastify";
+import { FastifyInstance } from "fastify";
 import { createUserController } from "../controllers/user.controller";
+import { authUserController } from "../controllers/auth.controller";
 
-async function createUserRoute(fastify: FastifyInstance) {
+// Define all routes related routes
+export async function createUserRoute(fastify: FastifyInstance) {
   fastify.post("/users", createUserController);
 }
 
-export default createUserRoute;
+export async function authUserRoute(fastify: FastifyInstance) {
+  fastify.post("/login", authUserController);
+}

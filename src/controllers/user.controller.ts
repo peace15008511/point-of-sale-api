@@ -1,4 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
+import * as bcrypt from "bcrypt";
+import { getUser } from "../services/user.service";
 import { createUser } from "../services/user.service";
 
 // Define an interface for the request body
@@ -6,23 +8,39 @@ interface CreateUserRequest {
   email: string;
   password: string;
 }
+type responseInt =
+  | { message: string; error: string }
+  | { message: string; response: boolean };
 
-async function createUserController(
+//Error response
+let errorResponse: responseInt = {
+  message: "Internal Server Error",
+  error: "An unexpected error occurred on the server",
+};
+
+export async function createUserController(
   request: FastifyRequest<{ Body: CreateUserRequest }>,
   reply: FastifyReply
 ) {
   try {
     const { email, password } = request.body;
+    const hashedPassword = await bcrypt.hash(password, 10); //hash the password before it goes to the database
+    const existingUser = await getUser(email); //check if the user exist before creating a duplicate user
 
-    // Create the user using the service function
-    const newUser = await createUser(email, password);
-
-    return reply.code(201).send(newUser);
+    if (!existingUser) {
+      // Create the user using the service function
+      const newUser = await createUser(email, hashedPassword);
+      let successResponse: responseInt = {
+        message: "success",
+        response: true,
+      };
+      reply.code(201).send(successResponse);
+    } else {
+      reply.code(500).send(errorResponse);
+    }
   } catch (error: any) {
     // Specify the type of 'error'
     console.error("Error creating user:", error);
-    return reply.code(500).send({ error: error.message });
+    return reply.code(500).send(errorResponse);
   }
 }
-
-export { createUserController };

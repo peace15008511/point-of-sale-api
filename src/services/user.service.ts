@@ -1,13 +1,7 @@
 import User from "../models/user.model";
 
-async function createUser(email: string, password: string) {
+export async function createUser(email: string, password: string) {
   try {
-    // Check if user with the provided email already exists
-    const existingUser = await User.findOne({ where: { email } });
-    if (existingUser) {
-      return { error: "User with this email already exists" };
-    }
-
     // Create the user
     const newUser = await User.create({ email, password });
     return newUser;
@@ -17,4 +11,13 @@ async function createUser(email: string, password: string) {
   }
 }
 
-export { createUser };
+export async function getUser(email: string) {
+  try {
+    // Check if user with the provided email already exists
+    const existingUser = await User.findOne({ where: { email } });
+    return existingUser;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw new Error("Internal server error");
+  }
+}
