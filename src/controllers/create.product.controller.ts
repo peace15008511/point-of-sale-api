@@ -45,6 +45,6 @@ export async function createProductController(
       reply.code(201).send(successResponse);
     }
   } catch (error: any) {
-    reply.code(500).send({ error: error.message });
+    reply.code(500).send(errorResponse);
   }
 }

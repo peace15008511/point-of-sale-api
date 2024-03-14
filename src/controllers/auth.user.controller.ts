@@ -1,4 +1,4 @@
-import fastify, { FastifyRequest, FastifyReply } from "fastify";
+import { fastify, FastifyRequest, FastifyReply } from "fastify";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import { getUser } from "../services/user.service";
@@ -16,23 +16,26 @@ type responseInt =
   | { message: string; error: string }
   | { message: string; response: string };
 
+//Error response
+let errorResponse: responseInt = {
+  message: "Unauthorized",
+  error: "Authentication credentials are missing or invalid",
+};
+
 export async function authUserController(
   request: FastifyRequest<{ Body: reqeustBodyInt }>,
   reply: FastifyReply
 ) {
   try {
-    //Error response
-    let errorResponse: responseInt = {
-      message: "Unauthorized",
-      error: "Authentication credentials are missing or invalid",
-    };
-
     //Body params
     const { email, password } = request.body;
 
     const existingUser = await getUser(email);
 
-    server.log.info("auth.controller.ts:" + JSON.stringify(existingUser));
+    server.log.info(
+      "auth.controller.ts: Existing user response =>" +
+        JSON.stringify(existingUser)
+    );
 
     if (!existingUser) {
       reply.status(401).send(errorResponse);
@@ -57,6 +60,10 @@ export async function authUserController(
       }
     }
   } catch (error: any) {
-    reply.code(500).send({ error: error.message });
+    errorResponse = {
+      message: "Internal Server Error",
+      error: "An unexpected error occurred on the server",
+    };
+    reply.code(500).send(errorResponse);
   }
 }

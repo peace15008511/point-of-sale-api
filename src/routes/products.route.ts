@@ -6,17 +6,17 @@ import { deleteProductController } from "../controllers/delete.product.controlle
 
 // Define all routes related routes
 export async function createProductRoute(fastify: FastifyInstance) {
-  fastify.post("/product", createProductController);
+  fastify.post("/products", createProductController);
 }
 
 export async function getProductsRoute(fastify: FastifyInstance) {
-  fastify.get("/product", getProductsController);
+  fastify.get("/products", getProductsController);
 }
 
 export async function updateProductRoute(fastify: FastifyInstance) {
-  fastify.put("/product", updateProductController);
+  fastify.put("/products/:id", updateProductController);
 }
 
 export async function deleteProductRoute(fastify: FastifyInstance) {
-  fastify.delete("/product", deleteProductController);
+  fastify.delete("/products/:id", deleteProductController);
 }
