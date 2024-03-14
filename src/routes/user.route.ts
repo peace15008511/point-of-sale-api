@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
-import { createUserController } from "../controllers/user.controller";
-import { authUserController } from "../controllers/auth.controller";
+import { createUserController } from "../controllers/create.user.controller";
+import { authUserController } from "../controllers/auth.user.controller";
 
 // Define all routes related routes
 export async function createUserRoute(fastify: FastifyInstance) {

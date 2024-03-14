@@ -12,10 +12,16 @@ type responseInt =
   | { message: string; error: string }
   | { message: string; response: boolean };
 
-//Error response
+//Default error response
 let errorResponse: responseInt = {
   message: "Internal Server Error",
   error: "An unexpected error occurred on the server",
+};
+
+//success response
+const successResponse: responseInt = {
+  message: "success",
+  response: true,
 };
 
 export async function createUserController(
@@ -30,17 +36,17 @@ export async function createUserController(
     if (!existingUser) {
       // Create the user using the service function
       const newUser = await createUser(email, hashedPassword);
-      let successResponse: responseInt = {
-        message: "success",
-        response: true,
-      };
-      reply.code(201).send(successResponse);
+      if (!newUser) {
+        reply.code(500).send(errorResponse);
+      } else {
+        reply.code(201).send(successResponse);
+      }
     } else {
       reply.code(500).send(errorResponse);
     }
   } catch (error: any) {
     // Specify the type of 'error'
     console.error("Error creating user:", error);
-    return reply.code(500).send(errorResponse);
+    reply.code(500).send(errorResponse);
   }
 }
