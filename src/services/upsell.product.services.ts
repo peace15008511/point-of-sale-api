@@ -1,8 +1,9 @@
 import Products from "../models/product.model";
+
 export async function linkUpsellProduct(
   productId: number,
   upsellProductId: number
-): Promise<void> {
+) {
   try {
     const product = await Products.findByPk(productId);
     const upsellProduct = await Products.findByPk(upsellProductId);
@@ -20,7 +21,7 @@ export async function linkUpsellProduct(
 export async function unlinkUpsellProduct(
   productId: number,
   upsellProductId: number
-): Promise<void> {
+) {
   try {
     const product = await Products.findByPk(productId);
 

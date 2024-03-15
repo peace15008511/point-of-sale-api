@@ -1,7 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import * as bcrypt from "bcrypt";
-import { getUser } from "../services/user.service";
-import { createUser } from "../services/user.service";
+import { getUser } from "../services/user.services";
+import { createUser } from "../services/user.services";
 
 // Define an interface for the request body
 interface CreateUserRequest {

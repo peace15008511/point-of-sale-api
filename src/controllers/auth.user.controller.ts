@@ -1,7 +1,7 @@
 import { fastify, FastifyRequest, FastifyReply } from "fastify";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
-import { getUser } from "../services/user.service";
+import { getUser } from "../services/user.services";
 
 const server = fastify({ logger: true });
 

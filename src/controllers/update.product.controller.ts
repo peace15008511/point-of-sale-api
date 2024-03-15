@@ -1,5 +1,5 @@
 import { fastify, FastifyRequest, FastifyReply } from "fastify";
-import { updateProduct } from "../services/product.service";
+import { updateProduct } from "../services/product.services";
 
 const server = fastify({ logger: true });
 

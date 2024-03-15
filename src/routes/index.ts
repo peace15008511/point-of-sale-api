@@ -1,12 +1,12 @@
 import { FastifyInstance } from "fastify";
 
-import { createUserRoute, authUserRoute } from "./user.route";
+import { createUserRoute, authUserRoute } from "./user.routes";
 import {
   createProductRoute,
   getProductsRoute,
   updateProductRoute,
   deleteProductRoute,
-} from "./products.route";
+} from "./product.routes";
 
 export async function routes(fastify: FastifyInstance) {
   // List all the routes in use here
