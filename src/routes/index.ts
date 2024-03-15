@@ -8,6 +8,13 @@ import {
   deleteProductRoute,
 } from "./product.routes";
 
+import {
+  linkUpsellProductRoute,
+  unlinkUpsellProductRoute,
+  getUpsellProductsRoute,
+  getProductsWithUpsell,
+} from "./upsell.product.routes";
+
 export async function routes(fastify: FastifyInstance) {
   // List all the routes in use here
   fastify.register(createUserRoute);
@@ -16,4 +23,8 @@ export async function routes(fastify: FastifyInstance) {
   fastify.register(getProductsRoute);
   fastify.register(updateProductRoute);
   fastify.register(deleteProductRoute);
+  fastify.register(linkUpsellProductRoute);
+  fastify.register(unlinkUpsellProductRoute);
+  fastify.register(getUpsellProductsRoute);
+  fastify.register(getProductsWithUpsell);
 }

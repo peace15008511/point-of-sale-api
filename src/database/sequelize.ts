@@ -8,4 +8,21 @@ const sequelize = new Sequelize({
   dialect: "mysql",
 });
 
+// Test the connection and synchronize the models
+(async () => {
+  try {
+    // Test the connection
+    await sequelize.authenticate();
+    console.log(
+      "Connection to the database has been established successfully."
+    );
+
+    // Synchronize the models with the database
+    await sequelize.sync();
+    console.log("Models synchronized successfully.");
+  } catch (error) {
+    console.error("Unable to connect to the database:", error);
+  }
+})();
+
 export default sequelize;

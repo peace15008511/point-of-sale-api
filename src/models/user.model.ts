@@ -33,14 +33,4 @@ User.init(
   }
 );
 
-// Synchronize the model with the database to create the table if it doesn't exist
-(async () => {
-  try {
-    await sequelize.sync();
-    console.log("User table synced successfully");
-  } catch (error) {
-    console.error("Error syncing User table:", error);
-  }
-})();
-
 export default User;

@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { createProductController } from "../controllers/create.product.controller";
-import { getProductsController } from "../controllers/get.product.controller";
+import { getProductsController } from "../controllers/get.products.controller";
 import { updateProductController } from "../controllers/update.product.controller";
 import { deleteProductController } from "../controllers/delete.product.controller";
 
