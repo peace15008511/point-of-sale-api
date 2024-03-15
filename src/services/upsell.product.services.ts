@@ -35,12 +35,12 @@ export async function unlinkUpsellProduct(
   }
 }
 
-export async function getUpsellProducts(
+export async function getUpsellProductsById(
   productId: number
 ): Promise<Products[]> {
   try {
+    //Find main product using productId(PK)
     const product = await Products.findByPk(productId);
-
     if (!product) {
       throw new Error("Product not found.");
     }

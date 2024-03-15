@@ -1,18 +1,16 @@
 import { fastify, FastifyRequest, FastifyReply } from "fastify";
-import { getProducts } from "../services/product.services";
+import { unlinkUpsellProduct } from "../services/upsell.product.services";
 
 const server = fastify({ logger: true });
 
-interface Product {
-  name: string;
-  description: string;
-  price: string;
-  quantity: number;
+interface linkUpsellReqBody {
+  productId: number;
+  upsellProductId: number;
 }
 
 interface SuccessResponse {
   message: string;
-  response: Product[];
+  response: boolean;
 }
 
 interface ErrorResponse {
@@ -21,7 +19,7 @@ interface ErrorResponse {
 }
 
 export async function unlinkUpsellProductController(
-  request: FastifyRequest,
+  request: FastifyRequest<{ Body: linkUpsellReqBody }>,
   reply: FastifyReply
 ) {
   //Default error response
@@ -31,24 +29,20 @@ export async function unlinkUpsellProductController(
   };
 
   try {
-    //Get all products
-    const products = await getProducts();
+    const { productId, upsellProductId } = request.body;
+    const unlinkUpsell = await unlinkUpsellProduct(productId, upsellProductId);
 
     server.log.info(
-      "get.product.controller.ts: products response =>" +
-        JSON.stringify(products)
+      "inlink.upsell.product.controller.ts: products response =>" +
+        JSON.stringify(unlinkUpsell)
     );
 
-    if (!products) {
-      reply.code(500).send(errorResponse);
-    } else {
-      //success response
-      let successResponse: SuccessResponse = {
-        message: "success",
-        response: products,
-      };
-      reply.code(200).send(successResponse);
-    }
+    //success response
+    let successResponse: SuccessResponse = {
+      message: "Request received",
+      response: true,
+    };
+    reply.code(200).send(successResponse);
   } catch (error: any) {
     reply.code(500).send(errorResponse);
   }

@@ -1,5 +1,5 @@
 import { fastify, FastifyRequest, FastifyReply } from "fastify";
-import { getProducts } from "../services/product.services";
+import { getUpsellProductsById } from "../services/upsell.product.services";
 
 const server = fastify({ logger: true });
 
@@ -20,8 +20,8 @@ interface ErrorResponse {
   error: string;
 }
 
-export async function getProductsWithUpsellController(
-  request: FastifyRequest,
+export async function getUpsellProductsController(
+  request: FastifyRequest<{ Params: { productId: number } }>,
   reply: FastifyReply
 ) {
   //Default error response
@@ -31,24 +31,20 @@ export async function getProductsWithUpsellController(
   };
 
   try {
-    //Get all products
-    const products = await getProducts();
+    const { productId } = request.params;
+    const UpsellProducts = await getUpsellProductsById(productId);
 
     server.log.info(
-      "get.product.controller.ts: products response =>" +
-        JSON.stringify(products)
+      "inlink.upsell.product.controller.ts: products response =>" +
+        JSON.stringify(UpsellProducts)
     );
 
-    if (!products) {
-      reply.code(500).send(errorResponse);
-    } else {
-      //success response
-      let successResponse: SuccessResponse = {
-        message: "success",
-        response: products,
-      };
-      reply.code(200).send(successResponse);
-    }
+    //success response
+    let successResponse: SuccessResponse = {
+      message: "Success",
+      response: UpsellProducts,
+    };
+    reply.code(200).send(successResponse);
   } catch (error: any) {
     reply.code(500).send(errorResponse);
   }

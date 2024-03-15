@@ -11,8 +11,7 @@ import {
 import {
   linkUpsellProductRoute,
   unlinkUpsellProductRoute,
-  getUpsellProductsRoute,
-  getProductsWithUpsell,
+  getRelatedUpsellProductsRoute,
 } from "./upsell.product.routes";
 
 export async function routes(fastify: FastifyInstance) {
@@ -25,6 +24,5 @@ export async function routes(fastify: FastifyInstance) {
   fastify.register(deleteProductRoute);
   fastify.register(linkUpsellProductRoute);
   fastify.register(unlinkUpsellProductRoute);
-  fastify.register(getUpsellProductsRoute);
-  fastify.register(getProductsWithUpsell);
+  fastify.register(getRelatedUpsellProductsRoute);
 }
