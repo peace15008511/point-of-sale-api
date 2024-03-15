@@ -1,4 +1,10 @@
-import { DataTypes, Model } from "sequelize";
+import {
+  DataTypes,
+  Model,
+  BelongsToManyAddAssociationMixin,
+  BelongsToManyGetAssociationsMixin,
+  BelongsToManyRemoveAssociationMixin,
+} from "sequelize";
 import sequelize from "../database/sequelize";
 
 class Products extends Model {
@@ -7,6 +13,14 @@ class Products extends Model {
   public description!: string;
   public price!: string;
   public quantity!: number;
+
+  // Define association methods
+  public addUpsellProduct!: BelongsToManyAddAssociationMixin<Products, number>;
+  public getUpsellProducts!: BelongsToManyGetAssociationsMixin<Products>;
+  public removeUpsellProduct!: BelongsToManyRemoveAssociationMixin<
+    Products,
+    number
+  >;
 }
 
 Products.init(
@@ -42,14 +56,12 @@ Products.init(
   }
 );
 
-// Synchronize the model with the database to create the table if it doesn't exist
-(async () => {
-  try {
-    await sequelize.sync();
-    console.log("Products table synced successfully");
-  } catch (error) {
-    console.error("Error syncing Products table:", error);
-  }
-})();
+// Define the many-to-many association for upsell products
+Products.belongsToMany(Products, {
+  as: "UpsellProducts",
+  foreignKey: "productId",
+  through: "ProductUpsells",
+  otherKey: "upsellProductId",
+});
 
 export default Products;
