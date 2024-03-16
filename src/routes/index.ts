@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify";
 
 import { createUserRoute, authUserRoute } from "./user.routes";
+
 import {
   createProductRoute,
   getProductsRoute,
@@ -14,7 +15,10 @@ import {
   getRelatedUpsellProductsRoute,
 } from "./upsell.product.routes";
 
-import { createProductsTransactionRoute } from "./transaction.routes";
+import {
+  createProductsTransactionRoute,
+  getTransactionRoute,
+} from "./transaction.routes";
 
 export async function routes(fastify: FastifyInstance) {
   // List all the routes in use here
@@ -28,4 +32,5 @@ export async function routes(fastify: FastifyInstance) {
   fastify.register(unlinkUpsellProductRoute);
   fastify.register(getRelatedUpsellProductsRoute);
   fastify.register(createProductsTransactionRoute);
+  fastify.register(getTransactionRoute);
 }
