@@ -14,6 +14,8 @@ import {
   getRelatedUpsellProductsRoute,
 } from "./upsell.product.routes";
 
+import { createProductsTransactionRoute } from "./transaction.routes";
+
 export async function routes(fastify: FastifyInstance) {
   // List all the routes in use here
   fastify.register(createUserRoute);
@@ -25,4 +27,5 @@ export async function routes(fastify: FastifyInstance) {
   fastify.register(linkUpsellProductRoute);
   fastify.register(unlinkUpsellProductRoute);
   fastify.register(getRelatedUpsellProductsRoute);
+  fastify.register(createProductsTransactionRoute);
 }
