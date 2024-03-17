@@ -1,16 +1,21 @@
+import * as dotenv from "dotenv";
 import fastify from "fastify";
 import { routes } from "./routes";
 
 const server = fastify({ logger: true });
 
+// Load environment variables from .env file
+dotenv.config();
+
+// Register routes
 server.register(routes);
 
 const start = async () => {
   try {
-    //Read port from environment variable => default is '3000'
-    const port: number = 8080; //Number(process.env.PORT) ?? 3000;
+    // Read 'PORT' from environment varible (default 'PORT' is '8080')
+    const port: number = Number(process.env.PORT) || 8080;
     await server.listen({ port: port });
-  } catch (err) {
+  } catch (err: any) {
     server.log.error(err);
     process.exit(1);
   }

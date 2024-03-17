@@ -1,10 +1,11 @@
 import { fastify, FastifyRequest, FastifyReply } from "fastify";
 import { updateProduct } from "../services/product.services";
+import { verifyToken } from "../middlewares/authMiddleware";
 
 const server = fastify({ logger: true });
 
 // Define an interface for the request body
-interface reqeustBodyInt {
+interface ReqeustBody {
   name: any;
   description: any;
   price: any;
@@ -28,7 +29,7 @@ let errorResponse: ErrorResponse = {
 };
 
 export async function updateProductController(
-  request: FastifyRequest<{ Params: { id: number }; Body: reqeustBodyInt }>,
+  request: FastifyRequest<{ Params: { id: number }; Body: ReqeustBody }>,
   reply: FastifyReply
 ) {
   //Default error response
@@ -38,10 +39,13 @@ export async function updateProductController(
   };
 
   try {
+    // Call the verifyToken middleware
+    await verifyToken(request, reply);
+
     const { name, description, price, quantity } = request.body;
     const { id } = request.params;
 
-    const data: reqeustBodyInt = {
+    const data: ReqeustBody = {
       name: name ? name : null,
       description: description ? description : null,
       price: price ? price : null,

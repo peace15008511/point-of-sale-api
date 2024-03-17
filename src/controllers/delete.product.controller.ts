@@ -1,9 +1,10 @@
 import { fastify, FastifyRequest, FastifyReply } from "fastify";
 import { deleteProduct } from "../services/product.services";
+import { verifyToken } from "../middlewares/authMiddleware";
 
 const server = fastify({ logger: true });
 
-interface reqeustParamsInt {
+interface ReqeustParams {
   id: number;
 }
 interface SuccessResponse {
@@ -22,11 +23,19 @@ let errorResponse: ErrorResponse = {
   error: "An unexpected error occurred on the server",
 };
 
+// Success response
+const successResponse: SuccessResponse = {
+  message: "Success",
+  response: true,
+};
+
 export async function deleteProductController(
-  request: FastifyRequest<{ Params: reqeustParamsInt }>,
+  request: FastifyRequest<{ Params: ReqeustParams }>,
   reply: FastifyReply
 ) {
   try {
+    // Call the verifyToken middleware
+    await verifyToken(request, reply);
     const { id } = request.params;
 
     const delProduct = await deleteProduct(id); // Delete product
@@ -34,8 +43,9 @@ export async function deleteProductController(
       "delete.product.controller.ts: delete product response:" +
         JSON.stringify(delProduct)
     );
-    reply.code(204);
+    reply.code(200).send(successResponse);
   } catch (error: any) {
-    reply.code(500).send(errorResponse);
+    console.log("Error", error);
+    reply.code(500).send({ error: "yoooh" });
   }
 }

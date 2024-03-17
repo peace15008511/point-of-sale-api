@@ -11,7 +11,7 @@ class Products extends Model {
   public id!: number;
   public name!: string;
   public description!: string;
-  public price!: string;
+  public price!: number;
   public quantity!: number;
 
   // Define association methods
@@ -39,19 +39,19 @@ Products.init(
       allowNull: false,
     },
     price: {
-      type: DataTypes.STRING,
+      type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },
     quantity: {
       type: DataTypes.INTEGER,
-      defaultValue: 1,
+      allowNull: false,
     },
   },
   {
     sequelize,
     modelName: "Products",
-    tableName: "products", // Specify the table name explicitly
-    timestamps: true, // Add createdAt and updatedAt timestamps
+    tableName: "products",
+    timestamps: true, // Add created_at and updated_at timestamps
     underscored: true, // Use underscored naming for columns (e.g., created_at)
   }
 );
@@ -59,9 +59,9 @@ Products.init(
 // Define the many-to-many association for upsell products
 Products.belongsToMany(Products, {
   as: "UpsellProducts",
-  foreignKey: "productId",
-  through: "ProductUpsells",
-  otherKey: "upsellProductId",
+  foreignKey: "main_product_id",
+  through: "upsell_products",
+  otherKey: "upsell_product_id",
 });
 
 export default Products;

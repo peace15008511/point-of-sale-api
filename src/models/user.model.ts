@@ -27,8 +27,8 @@ User.init(
   {
     sequelize,
     modelName: "User",
-    tableName: "users", // Specify the table name explicitly
-    timestamps: true, // Add createdAt and updatedAt timestamps
+    tableName: "users",
+    timestamps: true, // Add created_at and updated_at timestamps
     underscored: true, // Use underscored naming for columns (e.g., created_at)
   }
 );

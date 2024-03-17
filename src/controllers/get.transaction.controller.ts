@@ -1,9 +1,9 @@
-import { fastify, FastifyRequest, FastifyReply } from "fastify";
+import { FastifyRequest, FastifyReply } from "fastify";
 import { getTransactionById } from "../services/transaction.services";
+import { verifyToken } from "../middlewares/authMiddleware";
 
-const server = fastify({ logger: true });
-
-interface ErrorResponse {
+// Define interfaces
+interface ErrorResponseBody {
   message: string;
   error: string;
 }
@@ -12,28 +12,33 @@ export async function getTransactionController(
   request: FastifyRequest<{ Params: { transactionId: number } }>,
   reply: FastifyReply
 ) {
-  //Default error response
-  let errorResponse: ErrorResponse = {
-    message: "Internal Server Error",
-    error: "An unexpected error occurred on the server",
-  };
-
   try {
+    // Call the verifyToken middleware
+    await verifyToken(request, reply);
+
     const { transactionId } = request.params;
 
-    //ADD A PURCHASE TRANSACTION
-    const getTransaction = await getTransactionById(transactionId);
+    // Retrieve transaction by ID
+    const transaction = await getTransactionById(transactionId);
 
-    server.log.info(
-      "get.transaction.controller.ts: Transaction is:" +
-        JSON.stringify(getTransaction)
-    );
-    if (getTransaction != null) {
-      reply.code(500).send(errorResponse);
+    if (!transaction) {
+      // If transaction not found, send error response
+      const errorResponse: ErrorResponseBody = {
+        message: "Transaction not found",
+        error: `Transaction with ID ${transactionId} not found`,
+      };
+      reply.code(404).send(errorResponse);
     } else {
-      reply.code(200).send(getTransaction);
+      // If transaction found, send success response
+      reply.code(200).send(transaction);
     }
   } catch (error: any) {
+    // Log error and send error response
+    reply.log.error("Error retrieving transaction:", error);
+    const errorResponse: ErrorResponseBody = {
+      message: "Internal Server Error",
+      error: "An unexpected error occurred on the server",
+    };
     reply.code(500).send(errorResponse);
   }
 }

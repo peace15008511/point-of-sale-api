@@ -1,18 +1,18 @@
-# Task Manager API
+# Point Of Sale API
 
 ## Installation
 
 1. Clone this repository:
 
    ```bash
-   git clone https://github.com/peace15008511/task-manager-api.git
+   git clone https://github.com/peace15008511/point-of-sale-api.git
 
    ```
 
 2. Navigate to the project directory:
 
    ```bash
-   cd task-manager-api
+   cd point-of-sale-api
 
    ```
 
@@ -22,30 +22,167 @@
    npm install
    ```
 
-4. Start the server:
+4. Configure your database
+
+   ```bash
+   cp .env.example .env #Configure sensitive environment variables
+   ```
+
+   - Open .env file and configure PORT, DB_NAME, DB_USERNAME, DB_PASSWORD, and DB_HOST as your prefarence. NB make sure to configure a user that has all permissions.
+   - Create a database schema as per your DB_NAME configuration. You can do this using mysql cli, workbench or phpmyadmin.
+
+   - mysql cli example below:
+     ```bash
+     mysql -u <DB_USERNAME> -p -h <DB_HOST> # replace <DB_HOST>  and <DB_USERNAME> as per your .env configurations
+     CREATE DATABASE <DB_NAME>; # Replace <DB_NAME> as per your .env configurations
+     ```
+
+5. Start the server:
 
    ```bash
    npm run build
    npm run start
    ```
 
-   The server will start on port 3000 by default. You can access the API at http://localhost:3000
+   The server will start on port 8080 by default if environment varible <PORT> is not set. You can access the API at http://localhost:8080 or http://localhost:<PORT>
 
-# API Error Codes
+---
 
-### 200 OK
+# APIs Documentation
 
-- **Description:** Indicates that the request was successful.
-- **Meaning:** The server successfully processed the request.
-- **Sample Response:**
+### Create User
+
+Method: POST
+Path: /user
+Request Body:
 
 ```json
 {
-  "status": 200,
-  "message": "Request successful",
-  "data": {}
+  "email": "string",
+  "password": "string"
 }
 ```
+
+Success Code:201
+
+```json
+{
+  "message": "Success",
+  "response": true
+}
+```
+
+### User Login
+
+Method: POST
+Path: /user/login
+Request Body:
+
+```json
+{
+  "email": "string",
+  "password": "string"
+}
+```
+
+Success Code:200
+
+```json
+{
+  "message": "Success",
+  "response": "token"
+}
+```
+
+### Add Product
+
+Method: POST
+Path: /products
+Request Header: Authorization = token
+Request Body:
+
+```json
+{
+  "name": string,
+  "description": string,
+  "price": number,
+  "quantity": number,
+}
+```
+
+Success Code:201
+
+```json
+{
+  "message": "Success",
+  "response": true
+}
+```
+
+### Get Products
+
+## Success error codes as expected from APIs
+
+Method: GET
+Path: /products
+Request Header: Authorization = token
+
+```json
+{
+  "name": string,
+  "description": string,
+  "price": number,
+  "quantity": number,
+}
+```
+
+Success Code:201
+
+```json
+{
+  "message": "Success",
+  "response": true
+}
+```
+
+### Update Product
+
+Method: PUT
+Path: /products/:id
+Request Headers: Authorization = token
+Request Params: id
+
+```json
+{
+  //NB:atleast one should be populated
+  "name": string, //optional
+  "description": string, //optional
+  "price": number, //optional
+  "quantity": number, //optional
+}
+```
+
+Success Code:200
+
+```json
+{
+  "message": "Success",
+  "response": true
+}
+```
+
+### Delete Product
+
+Method: DELETE
+Path: /products/:id
+Request Headers: Authorization = token
+Request Params: id
+
+Success Code:204
+
+---
+
+## Common error codes
 
 ### 400 Bad Request
 
@@ -69,9 +206,17 @@
 
 ```json
 {
-  "status": 401,
   "message": "Unauthorized",
   "error": "Authentication credentials are missing or invalid"
+}
+```
+
+or
+
+```json
+{
+  "message": "Unauthorized",
+  "error": "Unauthorized: Token not provided"
 }
 ```
 
@@ -83,7 +228,6 @@
 
 ```json
 {
-  "status": 403,
   "message": "Forbidden",
   "error": "Access to the requested resource is forbidden"
 }
@@ -97,7 +241,6 @@
 
 ```json
 {
-  "status": 404,
   "message": "Not Found",
   "error": "The requested resource does not exist"
 }
@@ -111,7 +254,6 @@
 
 ```json
 {
-  "status": 500,
   "message": "Internal Server Error",
   "error": "An unexpected error occurred on the server"
 }

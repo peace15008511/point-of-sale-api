@@ -1,12 +1,12 @@
-import { fastify, FastifyRequest, FastifyReply } from "fastify";
+import { FastifyRequest, FastifyReply } from "fastify";
 import { getUpsellProductsById } from "../services/upsell.product.services";
+import { verifyToken } from "../middlewares/authMiddleware";
 
-const server = fastify({ logger: true });
-
+// Define interfaces
 interface Product {
   name: string;
   description: string;
-  price: string;
+  price: number;
   quantity: number;
 }
 
@@ -24,28 +24,34 @@ export async function getUpsellProductsController(
   request: FastifyRequest<{ Params: { productId: number } }>,
   reply: FastifyReply
 ) {
-  //Default error response
-  let errorResponse: ErrorResponse = {
+  // Default error response
+  const errorResponse: ErrorResponse = {
     message: "Internal Server Error",
     error: "An unexpected error occurred on the server",
   };
 
   try {
-    const { productId } = request.params;
-    const UpsellProducts = await getUpsellProductsById(productId);
+    // Call the verifyToken middleware
+    await verifyToken(request, reply);
 
-    server.log.info(
-      "inlink.upsell.product.controller.ts: products response =>" +
-        JSON.stringify(UpsellProducts)
+    const { productId } = request.params;
+    const upsellProducts = await getUpsellProductsById(productId);
+
+    // Log the response
+    reply.log.info(
+      "getUpsellProductsController: products response =>" +
+        JSON.stringify(upsellProducts)
     );
 
-    //success response
-    let successResponse: SuccessResponse = {
+    // Success response
+    const successResponse: SuccessResponse = {
       message: "Success",
-      response: UpsellProducts,
+      response: upsellProducts,
     };
     reply.code(200).send(successResponse);
   } catch (error: any) {
+    // Log the error and send error response
+    reply.log.error("Error getting upsell products:", error);
     reply.code(500).send(errorResponse);
   }
 }

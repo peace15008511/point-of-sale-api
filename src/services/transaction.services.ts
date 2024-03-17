@@ -21,7 +21,7 @@ interface MainProductInt {
   description: string;
   price: number;
   quantity: number;
-  ProductUpsells: UpsellProductInt[];
+  upsellProducts: UpsellProductInt[];
 }
 
 /******************* END OF BUILDING PRODUCT DATA*******************/
@@ -30,6 +30,8 @@ export async function createTransactionWithProducts(
   email: string,
   totalAmount: number,
   totalQuantity: number,
+  totalMainProductsQauntity: number,
+  totalUpsellProductsQauntity: number,
   purchasedProducts: MainProductInt[]
 ): Promise<Transaction> {
   try {
@@ -38,6 +40,8 @@ export async function createTransactionWithProducts(
       email,
       totalAmount: totalAmount.toFixed(2), // Round to 2 decimal places
       totalQuantity,
+      totalMainProductsQauntity,
+      totalUpsellProductsQauntity,
     });
 
     // Create main products and their associated upsell products
@@ -51,8 +55,8 @@ export async function createTransactionWithProducts(
       });
 
       // Create upsell products associated with the main product
-      if (productData.ProductUpsells && productData.ProductUpsells.length > 0) {
-        for (const upsellData of productData.ProductUpsells) {
+      if (productData.upsellProducts && productData.upsellProducts.length > 0) {
+        for (const upsellData of productData.upsellProducts) {
           await UpsellProduct.create({
             name: upsellData.name,
             description: upsellData.description,
@@ -66,7 +70,7 @@ export async function createTransactionWithProducts(
 
     return transaction;
   } catch (error: any) {
-    console.error("Error creating transaction with products:", error);
+    console.error("Error creating transaction with products:", error.message);
     throw new Error("Internal server error");
   }
 }

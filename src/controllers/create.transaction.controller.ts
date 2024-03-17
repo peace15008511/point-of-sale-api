@@ -1,5 +1,6 @@
 import { fastify, FastifyRequest, FastifyReply } from "fastify";
 import { createTransactionWithProducts } from "../services/transaction.services";
+import { verifyToken } from "../middlewares/authMiddleware";
 
 const server = fastify({ logger: true });
 
@@ -18,76 +19,60 @@ interface MainProductInt {
   description: string;
   price: number;
   quantity: number;
-  ProductUpsells: UpsellProductInt[];
+  upsellProducts: UpsellProductInt[];
 }
 
 // DEFINE REQUEST BODY INTERFACE
-interface RequestBodyInt {
+interface RequestBody {
   email: string;
   purchasedProducts: MainProductInt[];
 }
 /******************* END OF BUILDING REQUEST BODY INTERFACE *******************/
 
-/** LIST ALL RESPONSE INTERFACES AND DEFAULT RESPONSES */
 // Define an interface for the response
-type ResponseInt =
-  | { message: string; error: string }
-  | { message: string; response: boolean };
+interface ResponseBody {
+  message: string;
+  response?: boolean;
+  error?: string;
+}
 
 // Default error response
-let errorResponse: ResponseInt = {
+let errorResponse: ResponseBody = {
   message: "Internal Server Error",
   error: "An unexpected error occurred on the server",
 };
 
 // Success response
-const successResponse: ResponseInt = {
+const successResponse: ResponseBody = {
   message: "success",
   response: true,
 };
-/******************* END OF BUILDING REQUEST BODY INTERFACE *******************/
 
 export async function createProductsTransactionController(
-  request: FastifyRequest<{ Body: RequestBodyInt }>,
+  request: FastifyRequest<{ Body: RequestBody }>,
   reply: FastifyReply
 ) {
   try {
+    // Call the verifyToken middleware
+    await verifyToken(request, reply);
+
     const { email, purchasedProducts } = request.body;
 
-    let mainProductTotalAmount: number = 0;
-    let mainProductQuantity: number = 0;
-    let upsellProductTotalAmount: number = 0;
-    let upsellProductQuantity: number = 0;
-
-    // Calculate total amount and quantity for main products
-    purchasedProducts.forEach((mainProduct) => {
-      if (mainProduct.price) {
-        mainProductTotalAmount += mainProduct.price * mainProduct.quantity;
-      }
-      if (mainProduct.quantity) {
-        mainProductQuantity += mainProduct.quantity;
-      }
-      mainProduct.ProductUpsells.forEach((upsellProduct) => {
-        if (upsellProduct.price) {
-          upsellProductTotalAmount +=
-            upsellProduct.price * upsellProduct.quantity;
-        }
-        if (upsellProduct.quantity) {
-          upsellProductQuantity += upsellProduct.quantity;
-        }
-      });
-    });
-
-    // Calculate total amount and total quantity
-    const totalAmount: number =
-      mainProductTotalAmount + upsellProductTotalAmount;
-    const totalQuantity: number = mainProductQuantity + upsellProductQuantity;
+    // Calculate total amount and quantity
+    const {
+      totalAmount,
+      totalQuantity,
+      totalMainProductsQauntity,
+      totalUpsellProductsQauntity,
+    } = calculateTotal(purchasedProducts);
 
     // ADD A PURCHASE TRANSACTION
     const newProduct = await createTransactionWithProducts(
       email,
       totalAmount,
       totalQuantity,
+      totalMainProductsQauntity,
+      totalUpsellProductsQauntity,
       purchasedProducts
     );
 
@@ -101,7 +86,39 @@ export async function createProductsTransactionController(
       reply.code(201).send(successResponse);
     }
   } catch (error: any) {
-    console.error("Error creating transaction with products:", error);
+    server.log.error("Error creating transaction with products:", error);
     reply.code(500).send(errorResponse);
   }
+}
+
+// Function to calculate total amount and quantity
+function calculateTotal(products: MainProductInt[]) {
+  let totalAmount = 0;
+  let totalQuantity = 0;
+  let totalMainProductsQauntity = 0;
+  let totalUpsellProductsQauntity = 0;
+
+  products.forEach((product) => {
+    totalAmount += product.price * product.quantity;
+    //totalQuantity += product.quantity;
+    totalMainProductsQauntity += product.quantity;
+
+    product.upsellProducts.forEach((upsellProduct) => {
+      console.log("UPSELL DETECTED");
+      totalAmount += upsellProduct.price * upsellProduct.quantity;
+      //totalQuantity += upsellProduct.quantity;
+      totalUpsellProductsQauntity += upsellProduct.quantity;
+    });
+  });
+  totalQuantity = totalMainProductsQauntity + totalUpsellProductsQauntity;
+  console.log(
+    `totalAmount=${totalAmount},totalQuantity=${totalQuantity},totalUpsellProductsQauntity=${totalUpsellProductsQauntity},totalMainProductsQauntity=${totalMainProductsQauntity},`
+  );
+
+  return {
+    totalAmount,
+    totalQuantity,
+    totalUpsellProductsQauntity,
+    totalMainProductsQauntity,
+  };
 }

@@ -3,16 +3,15 @@ import sequelize from "../database/sequelize";
 
 class Transaction extends Model {
   public transactionId!: number;
-  public email!: string; // Changed from String to string
-
-  // Corrected the datatype of totalAmount to match the database
+  public email!: string;
   public totalAmount!: number;
   public totalQuantity!: number;
+  totalMainProductsQauntity!: number;
+  totalUpsellProductsQauntity!: number;
 }
 
 Transaction.init(
   {
-    // Corrected column name to match the database
     transactionId: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
@@ -30,11 +29,21 @@ Transaction.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    totalMainProductsQauntity: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    totalUpsellProductsQauntity: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
   },
   {
     sequelize,
     modelName: "Transaction",
     tableName: "transactions",
+    timestamps: true, // Add created_at and updated_at timestamps
+    underscored: true, // Use underscored naming for columns (e.g., created_at)
   }
 );
 
@@ -78,13 +87,15 @@ MainProduct.init(
   {
     sequelize,
     modelName: "MainProduct",
-    tableName: "mainProducts",
+    tableName: "main_products_transactions",
+    timestamps: true, // Add created_at and updated_at timestamps
+    underscored: true, // Use underscored naming for columns (e.g., created_at)
   }
 );
 
 class UpsellProduct extends Model {
-  public upsellProductId!: number; // Changed from String to number
-  public name!: string; // Changed from String to string
+  public upsellProductId!: number;
+  public name!: string;
   public description!: string;
   public price!: number;
   public quantity!: number;
@@ -122,21 +133,23 @@ UpsellProduct.init(
   {
     sequelize,
     modelName: "UpsellProduct",
-    tableName: "upsellProducts",
+    tableName: "upsell_products_transactions",
+    timestamps: true, // Add created_at and updated_at timestamps
+    underscored: true, // Use underscored naming for columns (e.g., created_at)
   }
 );
 
-// Define associations with correct foreign key column names
+// Define associations
 Transaction.hasMany(MainProduct, {
   as: "mainProducts",
-  foreignKey: "TransactionId",
+  foreignKey: "transaction_id",
 });
-MainProduct.belongsTo(Transaction, { foreignKey: "TransactionId" });
+MainProduct.belongsTo(Transaction, { foreignKey: "transaction_id" });
 
 MainProduct.hasMany(UpsellProduct, {
   as: "upsellProducts",
-  foreignKey: "MainProductId",
+  foreignKey: "main_product_id",
 });
-UpsellProduct.belongsTo(MainProduct, { foreignKey: "MainProductId" });
+UpsellProduct.belongsTo(MainProduct, { foreignKey: "main_product_id" });
 
 export { Transaction, MainProduct, UpsellProduct };

@@ -4,9 +4,9 @@ import { authUserController } from "../controllers/auth.user.controller";
 
 // Define all routes related routes
 export async function createUserRoute(fastify: FastifyInstance) {
-  fastify.post("/users", createUserController);
+  fastify.post("/user", createUserController);
 }
 
 export async function authUserRoute(fastify: FastifyInstance) {
-  fastify.post("/login", authUserController);
+  fastify.post("/user/login", authUserController);
 }
