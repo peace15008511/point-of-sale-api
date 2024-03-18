@@ -1,6 +1,7 @@
 import { fastify, FastifyRequest, FastifyReply } from "fastify";
 import { createProduct } from "../services/product.services";
 import { verifyToken } from "../middlewares/authMiddleware";
+import { validateData } from "../middlewares/validateMiddleware";
 
 const server = fastify({ logger: true });
 
@@ -38,6 +39,9 @@ export async function createProductController(
   try {
     // Call the verifyToken middleware
     await verifyToken(request, reply);
+
+    // Call the verifyData middleware
+    await validateData(request, reply, "createProductSchema", "body");
 
     // Extract request body parameters
     const { name, description, price, quantity } = request.body;

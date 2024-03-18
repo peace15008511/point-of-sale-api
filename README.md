@@ -194,9 +194,18 @@ Success Code:204
 
 ```json
 {
-  "status": 400,
-  "message": "Bad Request",
-  "error": "Invalid parameters provided"
+  "error": "Invalid parameters",
+  "details": [
+    {
+      "instancePath": "",
+      "schemaPath": "#/required",
+      "keyword": "required",
+      "params": {
+        "missingProperty": "quantity"
+      },
+      "message": "must have required property 'quantity'"
+    }
+  ]
 }
 ```
 
@@ -243,8 +252,9 @@ or
 
 ```json
 {
-  "message": "Not Found",
-  "error": "The requested resource does not exist"
+  "message": "Route POST:/specified/route/path not found",
+  "error": "Not Found",
+  "statusCode": 404
 }
 ```
 
