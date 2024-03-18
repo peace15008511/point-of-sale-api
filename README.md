@@ -24,8 +24,10 @@
 
 4. Configure your database
 
+   -Make sure mysql database is installed
+
    ```bash
-   cp .env.example .env #Configure sensitive environment variables
+   cp .example.env .env #Configure sensitive environment variables
    ```
 
    - Open .env file and configure PORT, DB_NAME, DB_USERNAME, DB_PASSWORD, and DB_HOST as your prefarence. NB make sure to configure a user that has all permissions.
